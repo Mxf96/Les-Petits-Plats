@@ -34,8 +34,8 @@
 
 /* Gestion des deux flèches */
 .select-header img {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   margin-left: 8px;
 }
 
@@ -47,6 +47,8 @@
 /* Flèche vers le bas visible par défaut */
 .select-header .icon-down {
   display: inline;
+  width: 15px;
+  height: 15px;
 }
 
 /* Quand le menu est actif (ouvert) : on inverse */

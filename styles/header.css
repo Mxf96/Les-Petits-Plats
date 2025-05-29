@@ -26,7 +26,7 @@
   position: absolute;
   top: 40px;
   left: 40px;
-  font: 700 2rem/1 "Anton", sans-serif;
+  font: 400 40px/1 "Anton", sans-serif;
   letter-spacing: 1px;
   z-index: 2;
 }
@@ -74,12 +74,11 @@
 /* BOUTON positionné en absolu dans le champ */
 .search-bar button {
   position: absolute;
-  background: black !important;
+  background: #000;
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
   border-radius: 10px;
-  background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
@@ -89,6 +88,11 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
+  transition: background 0.3s ease, filter 0.3s ease;
+}
+
+.search-bar button:hover {
+  background: #ffd15b;
 }
 
 /* Image de loupe */
@@ -96,4 +100,38 @@
   width: 40px;
   height: 40px;
   filter: brightness(0) invert(1);
+}
+
+.search-bar button:hover img {
+  filter: none;
+}
+
+@media (max-width: 1439px) and (min-width: 1024px) {
+  .logo {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    font: 400 30px/1 "Anton", sans-serif;
+    letter-spacing: 1px;
+    z-index: 2;
+  }
+
+  .header-content {
+    margin-top: -30px;
+  }
+
+  .subtitle {
+    font: 700 35px/1.4 "Anton", sans-serif;
+    color: #ffd15b;
+    margin-bottom: 40px;
+  }
+
+  .search-bar {
+    max-width: 750px;
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 20px 60px 20px 20px;
+  }
 }
