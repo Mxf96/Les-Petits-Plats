@@ -73,6 +73,61 @@ form.addEventListener("submit", (e) => {
   searchInput.value = "";
 });
 
+// Récupération du <ul> des ingrédients
+const ingredientList = document.getElementById("ingredient-options");
+
+// Génère une liste unique d'ingrédients depuis les recettes
+function getUniqueIngredients(recipes) {
+  const ingredientsSet = new Set();
+  recipes.forEach((recipe) => {
+    recipe.ingredients.forEach((item) => {
+      ingredientsSet.add(item.ingredient.toLowerCase());
+    });
+  });
+
+  return Array.from(ingredientsSet).sort();
+}
+
+// Remplit dynamiquement la liste <ul>
+function populateIngredientOptions() {
+  const ingredients = getUniqueIngredients(recipes);
+  ingredientList.innerHTML = ""; // vide les options existantes
+
+  ingredients.forEach((ingredient) => {
+    const li = document.createElement("li");
+    li.textContent = ingredient.charAt(0).toUpperCase() + ingredient.slice(1);
+    ingredientList.appendChild(li);
+
+    // Ajout du clic pour filtrer via tag
+    li.addEventListener("click", () => {
+      if (!activeTags.includes(ingredient)) {
+        activeTags.push(ingredient);
+        createTag(ingredient);
+        filterAndRender();
+      }
+    });
+  });
+}
+
+// Activation/désactivation des menus custom-select au clic
+document.querySelectorAll(".select-header").forEach((header) => {
+  header.addEventListener("click", () => {
+    const parent = header.closest(".custom-select");
+    parent.classList.toggle("active");
+  });
+});
+
+// Fermer tous les menus si on clique ailleurs
+document.addEventListener("click", (e) => {
+  document.querySelectorAll(".custom-select").forEach((select) => {
+    if (!select.contains(e.target)) {
+      select.classList.remove("active");
+    }
+  });
+});
+
+
 // Initialisation
 renderRecipes(recipes);
 updateRecipeCount(recipes.length);
+populateIngredientOptions();
