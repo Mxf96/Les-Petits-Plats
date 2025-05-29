@@ -125,3 +125,41 @@
   margin-left: auto;
   font-weight: 400;
 }
+
+/* Tags */
+.active-tags {
+  margin: 1rem 0;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-left: 55px;
+  font-family: "Manrope", sans-serif;
+}
+
+.tag {
+  background-color: #ffd700;
+  padding: 1rem 1rem;
+  border-radius: 5px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 400;
+}
+
+.tag button {
+  background: none;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+/* Recipe */
+.recipe-count {
+  font-weight: bold;
+  text-align: right;
+  margin-top: 1rem;
+  margin-right: 1rem;
+  color: #333;
+}

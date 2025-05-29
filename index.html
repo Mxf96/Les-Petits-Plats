@@ -30,13 +30,15 @@
         </h2>
 
         <div class="search-bar">
-          <input
-            type="text"
-            placeholder="Rechercher une recette, un ingrédient, ..."
-          />
-          <button type="submit">
-            <img src="./assets/img/icon/loupe.png" alt="Recherche" />
-          </button>
+          <form id="search-form">
+            <input
+              type="text"
+              placeholder="Rechercher une recette, un ingrédient, ..."
+            />
+            <button type="submit">
+              <img src="./assets/img/icon/loupe.png" alt="Recherche" />
+            </button>
+          </form>
         </div>
       </div>
     </header>
@@ -134,12 +136,14 @@
             </div>
           </div>
         </div>
-        <div class="recipe-count">1500 recettes</div>
+        <div class="recipe-count"></div>
       </section>
+
+      <div class="active-tags"></div>
 
       <section class="cards-container"></section>
     </main>
     <script src="./script/renderCards.js" type="module"></script>
-    <script src="./script/filter.js"></script>
+    <script src="./script/filters.js" type="module"></script>
   </body>
 </html>
