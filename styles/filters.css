@@ -1,6 +1,8 @@
 .filters-bar {
   display: flex;
   align-items: flex-start;
+  max-width: 1440px;
+  margin: 0 auto;
   padding: 40px 60px;
   background: #f2f2f2;
   flex-wrap: wrap;
@@ -36,7 +38,6 @@
 .select-header img {
   width: 10px;
   height: 10px;
-  margin-left: 8px;
 }
 
 /* Flèche vers le haut cachée par défaut */
@@ -164,4 +165,88 @@
   margin-top: 1rem;
   margin-right: 1rem;
   color: #333;
+}
+
+@media (max-width: 1439px) and (min-width: 1024px) {
+  .filters-bar {
+    max-width: 1024px;
+    margin: 0 auto;
+    margin-top: -175px;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .filters-bar {
+    max-width: 768px;
+    margin: 0 auto;
+    margin-top: -290px;
+  }
+
+  .custom-select {
+    width: 150px;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 425px) {
+  .filters-bar {
+    max-width: 425px;
+    margin: 0 auto;
+    margin-top: -450px;
+  }
+
+  .filters {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .custom-select {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 424px) and (min-width: 375px) {
+  .filters-bar {
+    max-width: 375px;
+    margin: 0 auto;
+    margin-top: -475px;
+  }
+
+  .filters {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .custom-select {
+    margin: 0 auto;
+  }
+
+  .select-header {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 374px) and (min-width: 320px) {
+  .filters-bar {
+    max-width: 320px;
+    margin: 0 auto;
+    margin-top: -500px;
+  }
+
+  .filters {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .custom-select {
+    margin: 0 auto;
+  }
+
+  .select-header {
+    font-size: 12px;
+  }
+
+  .recipe-count {
+    font-weight: bold;
+    text-align: left;
+  }
 }

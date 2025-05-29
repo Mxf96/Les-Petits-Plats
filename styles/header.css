@@ -4,7 +4,8 @@
 
 .main-header {
   position: relative;
-  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
   height: 650px;
   overflow: hidden;
   color: #fff;
@@ -107,13 +108,13 @@
 }
 
 @media (max-width: 1439px) and (min-width: 1024px) {
+  .main-header {
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
   .logo {
-    position: absolute;
-    top: 40px;
-    left: 40px;
     font: 400 30px/1 "Anton", sans-serif;
-    letter-spacing: 1px;
-    z-index: 2;
   }
 
   .header-content {
@@ -122,7 +123,6 @@
 
   .subtitle {
     font: 700 35px/1.4 "Anton", sans-serif;
-    color: #ffd15b;
     margin-bottom: 40px;
   }
 
@@ -133,5 +133,169 @@
   .search-bar input {
     width: 100%;
     padding: 20px 60px 20px 20px;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .main-header {
+    max-width: 768px;
+    margin: 0 auto;
+  }
+
+  .logo {
+    font: 400 20px/1 "Anton", sans-serif;
+  }
+
+  .header-content {
+    margin-top: -100px;
+  }
+
+  .subtitle {
+    font: 700 25px/1.4 "Anton", sans-serif;
+    margin-bottom: 40px;
+  }
+
+  .search-bar {
+    max-width: 600px;
+  }
+
+  .search-bar input {
+    padding: 10px 60px 10px 20px;
+  }
+
+  .search-bar button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .search-bar button img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 425px) {
+  .main-header {
+    max-width: 425px;
+    margin: 0 auto;
+  }
+
+  .logo {
+    top: 20px;
+    left: 20px;
+    font: 400 10px/1 "Anton", sans-serif;
+  }
+
+  .header-content {
+    margin-top: -200px;
+  }
+
+  .subtitle {
+    font: 700 18px/1.4 "Anton", sans-serif;
+    margin-bottom: 10px;
+  }
+
+  .search-bar {
+    max-width: 350px;
+  }
+
+  .search-bar input {
+    padding: 5px 60px 5px 20px;
+    font-size: 14px;
+  }
+
+  .search-bar button {
+    width: 25px;
+    height: 25px;
+    border-radius: 7px;
+  }
+
+  .search-bar button img {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+@media (max-width: 424px) and (min-width: 375px) {
+  .main-header {
+    max-width: 375px;
+    margin: 0 auto;
+  }
+
+  .logo {
+    top: 20px;
+    left: 20px;
+    font: 400 10px/1 "Anton", sans-serif;
+  }
+
+  .header-content {
+    margin-top: -225px;
+  }
+
+  .subtitle {
+    font: 700 18px/1.4 "Anton", sans-serif;
+    margin-bottom: 5px;
+  }
+
+  .search-bar {
+    max-width: 350px;
+  }
+
+  .search-bar input {
+    padding: 5px 60px 5px 20px;
+    font-size: 12px;
+  }
+
+  .search-bar button {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+  }
+
+  .search-bar button img {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 374px) and (min-width: 320px) {
+  .main-header {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .logo {
+    top: 20px;
+    left: 20px;
+    font: 400 10px/1 "Anton", sans-serif;
+  }
+
+  .header-content {
+    margin-top: -230px;
+  }
+
+  .subtitle {
+    font: 400 14px/1.4 "Anton", sans-serif;
+    margin-bottom: 10px;
+  }
+
+  .search-bar {
+    max-width: 350px;
+  }
+
+  .search-bar input {
+    padding: 5px 60px 5px 20px;
+    font-size: 8px;
+  }
+
+  .search-bar button {
+    width: 20px;
+    height: 20px;
+    border-radius: 7px;
+  }
+
+  .search-bar button img {
+    width: 10px;
+    height: 10px;
   }
 }

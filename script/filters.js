@@ -126,7 +126,6 @@ document.addEventListener("click", (e) => {
   });
 });
 
-
 // Initialisation
 renderRecipes(recipes);
 updateRecipeCount(recipes.length);

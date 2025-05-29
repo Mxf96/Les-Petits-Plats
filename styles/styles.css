@@ -5,6 +5,10 @@
   /* border: 1px solid red; */
 }
 
+body {
+  background: #f2f2f2;;
+}
+
 @font-face {
   font-family: "Anton";
   src: url("../assets/fonts/Anton/Anton-Regular.ttf") format("truetype");
