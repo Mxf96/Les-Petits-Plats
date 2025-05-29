@@ -1,0 +1,127 @@
+.filters-bar {
+  display: flex;
+  align-items: flex-start;
+  padding: 40px 60px;
+  background: #f2f2f2;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.filters {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Composant select personnalisé */
+.custom-select {
+  width: 200px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Manrope", sans-serif;
+  position: relative;
+}
+
+/* En-tête cliquable */
+.select-header {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Gestion des deux flèches */
+.select-header img {
+  width: 14px;
+  height: 14px;
+  margin-left: 8px;
+}
+
+/* Flèche vers le haut cachée par défaut */
+.select-header .icon-up {
+  display: none;
+}
+
+/* Flèche vers le bas visible par défaut */
+.select-header .icon-down {
+  display: inline;
+}
+
+/* Quand le menu est actif (ouvert) : on inverse */
+.custom-select.active .icon-up {
+  display: inline;
+}
+
+.custom-select.active .icon-down {
+  display: none;
+}
+
+/* Contenu déroulant */
+.select-body {
+  display: none;
+  flex-direction: column;
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+.custom-select.active .select-body {
+  display: flex;
+}
+
+/* Champ de recherche */
+.select-search {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.select-search input {
+  width: 100%;
+  padding: 10px 35px 10px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: "Manrope", sans-serif;
+  font-size: 0.95rem;
+}
+
+.select-search img {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(0.4);
+}
+
+/* Liste des options */
+.select-options {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.select-options li {
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  border-radius: 6px;
+}
+
+.select-options li:hover {
+  background: #ffd15b;
+}
+
+/* Compteur de recettes */
+.recipe-count {
+  font-family: "Anton", sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1b1b1b;
+  white-space: nowrap;
+  margin-left: auto;
+  font-weight: 400;
+}

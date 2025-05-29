@@ -1,0 +1,108 @@
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 75px;
+  padding: 60px;
+  background-color: #f2f2f2;
+}
+
+/* Carte */
+.card {
+  background-color: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  font-family: "Manrope", sans-serif;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Image avec badge durée */
+.card-image {
+  position: relative;
+  width: 100%;
+  height: 225px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-duration {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #ffd15b;
+  color: #000;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 25px;
+}
+
+/* Contenu texte */
+.card-content {
+  padding: 24px 20px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-title {
+  font-family: "Anton", sans-serif;
+  font-size: 18px;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Sous-titres : RECETTE / INGRÉDIENTS */
+.section-subtitle {
+  font-size: 12px;
+  color: #7a7a7a;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+/* Description recette */
+.card-description {
+  font-size: 14px;
+  color: #1b1b1b;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Liste ingrédients : deux colonnes */
+.card-ingredients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card-ingredients ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  min-width: 140px;
+}
+
+.card-ingredients li {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #1b1b1b;
+}
+
+.card-ingredients strong {
+  font-weight: bold;
+  color: #000;
+}

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/styles.css" />
+    <link rel="stylesheet" href="./styles/header.css" />
+    <link rel="stylesheet" href="./styles/filters.css" />
+    <link rel="stylesheet" href="./styles/card.css" />
+    <title>Les petits plats</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <!-- logo placé TOUT DE SUITE après l’ouverture du header -->
+      <h1 class="logo">LES PETITS PLATS <span class="dot">●</span></h1>
+
+      <!-- image de fond -->
+      <img
+        src="./assets/img/Home.png"
+        alt="Bowl avec légumes"
+        class="header-background"
+      />
+
+      <!-- bloc centré -->
+      <div class="header-content">
+        <h2 class="subtitle">
+          CHERCHEZ PARMI PLUS DE 1500 RECETTES<br />
+          DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES
+        </h2>
+
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="Rechercher une recette, un ingrédient, ..."
+          />
+          <button type="submit">
+            <img src="./assets/img/icon/loupe.png" alt="Recherche" />
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="filters-bar">
+        <div class="filters">
+          <div class="custom-select">
+            <div class="select-header">
+              Ingrédients
+              <img
+                class="icon-down"
+                src="./assets/img/icon/down.png"
+                alt="flèche bas"
+              />
+              <img
+                class="icon-up"
+                src="./assets/img/icon/upload.png"
+                alt="flèche haut"
+              />
+            </div>
+            <div class="select-body">
+              <div class="select-search">
+                <input type="text" placeholder="Rechercher un ingrédient..." />
+                <img src="./assets/img/icon/loupe.png" alt="loupe" />
+              </div>
+              <ul class="select-options">
+                <li>Jus de citron</li>
+                <li>Glaçons</li>
+                <li>Tomate</li>
+                <li>Poulet</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="filters">
+          <div class="custom-select">
+            <div class="select-header">
+              Appareils
+              <img
+                class="icon-down"
+                src="./assets/img/icon/down.png"
+                alt="flèche bas"
+              />
+              <img
+                class="icon-up"
+                src="./assets/img/icon/upload.png"
+                alt="flèche haut"
+              />
+            </div>
+            <div class="select-body">
+              <div class="select-search">
+                <input type="text" placeholder="Rechercher un ingrédient..." />
+                <img src="./assets/img/icon/loupe.png" alt="loupe" />
+              </div>
+              <ul class="select-options">
+                <li>Four</li>
+                <li>Micro-ondes</li>
+                <li>Mixeur</li>
+                <li>Cuiseur vapeur</li>
+                <li>Blender</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="filters">
+          <div class="custom-select">
+            <div class="select-header">
+              Ustensiles
+              <img
+                class="icon-down"
+                src="./assets/img/icon/down.png"
+                alt="flèche bas"
+              />
+              <img
+                class="icon-up"
+                src="./assets/img/icon/upload.png"
+                alt="flèche haut"
+              />
+            </div>
+            <div class="select-body">
+              <div class="select-search">
+                <input type="text" placeholder="Rechercher un ingrédient..." />
+                <img src="./assets/img/icon/loupe.png" alt="loupe" />
+              </div>
+              <ul class="select-options">
+                <li>Cuillère en bois</li>
+                <li>Passoire</li>
+                <li>Louche</li>
+                <li>Couteau</li>
+                <li>Épluche-légumes</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="recipe-count">1500 recettes</div>
+      </section>
+
+      <section class="cards-container">
+        <article class="card">
+          <div class="card-image">
+            <img
+              src="./assets/img/recette/Recette01.jpg"
+              alt="Limonade de coco"
+            />
+            <span class="card-duration">10min</span>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Limonade de coco</h3>
+
+            <h4 class="section-subtitle">Recette</h4>
+            <p class="card-description">
+              Mettre les glaçons à votre goût dans le blender. Ajouter le lait,
+              la crème de coco, le jus de 2 citrons et le sucre ensemble. Mixer
+              jusqu'à obtenir la consistance désirée.
+            </p>
+
+            <h4 class="section-subtitle">Ingrédients</h4>
+            <div class="card-ingredients">
+              <ul>
+                <li><strong>Lait de coco</strong><br />400ml</li>
+                <li><strong>Crème de coco</strong><br />4 cuillères</li>
+                <li><strong>Glaçons</strong><br />2</li>
+              </ul>
+              <ul>
+                <li><strong>Jus de citron</strong><br />2</li>
+                <li><strong>Sucre</strong><br />20g</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-image">
+            <img
+              src="./assets/img/recette/Recette01.jpg"
+              alt="Limonade de coco"
+            />
+            <span class="card-duration">10min</span>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Limonade de coco</h3>
+
+            <h4 class="section-subtitle">Recette</h4>
+            <p class="card-description">
+              Mettre les glaçons à votre goût dans le blender. Ajouter le lait,
+              la crème de coco, le jus de 2 citrons et le sucre ensemble. Mixer
+              jusqu'à obtenir la consistance désirée.
+            </p>
+
+            <h4 class="section-subtitle">Ingrédients</h4>
+            <div class="card-ingredients">
+              <ul>
+                <li><strong>Lait de coco</strong><br />400ml</li>
+                <li><strong>Crème de coco</strong><br />4 cuillères</li>
+                <li><strong>Glaçons</strong><br />2</li>
+              </ul>
+              <ul>
+                <li><strong>Jus de citron</strong><br />2</li>
+                <li><strong>Sucre</strong><br />20g</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-image">
+            <img
+              src="./assets/img/recette/Recette01.jpg"
+              alt="Limonade de coco"
+            />
+            <span class="card-duration">10min</span>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Limonade de coco</h3>
+
+            <h4 class="section-subtitle">Recette</h4>
+            <p class="card-description">
+              Mettre les glaçons à votre goût dans le blender. Ajouter le lait,
+              la crème de coco, le jus de 2 citrons et le sucre ensemble. Mixer
+              jusqu'à obtenir la consistance désirée.
+            </p>
+
+            <h4 class="section-subtitle">Ingrédients</h4>
+            <div class="card-ingredients">
+              <ul>
+                <li><strong>Lait de coco</strong><br />400ml</li>
+                <li><strong>Crème de coco</strong><br />4 cuillères</li>
+                <li><strong>Glaçons</strong><br />2</li>
+              </ul>
+              <ul>
+                <li><strong>Jus de citron</strong><br />2</li>
+                <li><strong>Sucre</strong><br />20g</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer></footer>
+
+    <script src="./script/filter.js"></script>
+  </body>
+</html>
