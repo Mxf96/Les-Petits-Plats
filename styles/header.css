@@ -1,6 +1,6 @@
-/* ======================= */
-/*      SECTION HEADER     */
-/* ======================= */
+/* =========================================================
+  SECTION HEADER    
+========================================================= */
 
 .main-header {
   overflow: visible;
@@ -114,13 +114,12 @@
 /*  Suggestions du header  */
 /* ======================= */
 
-/* Le conteneur est maintenant appendé à <body> et positionné en fixed */
 #global-suggestions {
-  position: fixed; /* important : hors du flux du header */
-  left: 0; /* posés par le JS via getBoundingClientRect */
+  position: absolute;
+  left: 0;
   top: 0;
   width: 0;
-  display: none; /* le JS gère l’ouverture */
+  display: none;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.95),
@@ -133,10 +132,10 @@
   padding: 8px 0;
   max-height: 320px;
   overflow-y: auto;
-  z-index: 9999; /* au-dessus de tout */
+  z-index: 9999;
   box-sizing: border-box;
 
-  /* effet verre dépoli (fallback graceful) */
+  /* effet verre dépoli */
   backdrop-filter: blur(10px) saturate(1.1);
   -webkit-backdrop-filter: blur(10px) saturate(1.1);
 
@@ -175,14 +174,15 @@
 /* Icône loupe */
 #global-suggestions li::before {
   content: "";
+  display: inline-block;
   width: 18px;
   height: 18px;
   flex: 0 0 18px;
-  background: #7a7a7a;
-  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>")
-    center / 100% 100% no-repeat;
-  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>")
-    center / 100% 100% no-repeat;
+  margin-right: 10px;
+  background-image: url("/assets/img/icon/loupe.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
   opacity: 0.7;
 }
 

@@ -1,4 +1,10 @@
+/* ===================================================================
+ F I L T E R S 
+ =================================================================== */
+
 .filters-bar {
+  position: relative;
+  z-index: 50;
   display: flex;
   align-items: flex-start;
   max-width: 1440px;
@@ -15,17 +21,33 @@
   flex-wrap: wrap;
 }
 
-/* Composant select personnalisé */
+/* -------------------------------------------------------------------
+   Correctif   « la barre de recherche bloque les clics sur les filtres »
+   ------------------------------------------------------------------- */
+
+.search-bar {
+  pointer-events: none;
+}
+.search-bar form,
+.search-bar input,
+.search-bar button {
+  pointer-events: auto;
+}
+
+/* ------------------------------------------------------------------ */
+/*                       Composant select                             */
+/* ------------------------------------------------------------------ */
 .custom-select {
+  position: relative;
+  z-index: 60;
   width: 200px;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   font-family: "Manrope", sans-serif;
-  position: relative;
 }
 
-/* En-tête cliquable */
+/* En‑tête cliquable */
 .select-header {
   padding: 12px 16px;
   display: flex;
@@ -34,51 +56,62 @@
   cursor: pointer;
 }
 
-/* Gestion des deux flèches */
+/* Flèches */
 .select-header img {
   width: 10px;
   height: 10px;
 }
-
-/* Flèche vers le haut cachée par défaut */
 .select-header .icon-up {
   display: none;
 }
-
-/* Flèche vers le bas visible par défaut */
 .select-header .icon-down {
   display: inline;
   width: 15px;
   height: 15px;
 }
 
-/* Quand le menu est actif (ouvert) : on inverse */
 .custom-select.active .icon-up {
   display: inline;
 }
-
 .custom-select.active .icon-down {
   display: none;
 }
 
-/* Contenu déroulant */
+/* Corps déroulant --------------------------------------------------- */
 .select-body {
   display: none;
   flex-direction: column;
   padding: 10px;
   border-top: 1px solid #eee;
 }
-
 .custom-select.active .select-body {
   display: flex;
 }
 
-/* Champ de recherche */
+.select-body {
+  position: absolute; /* ↓ ancre sur .custom-select                 */
+  left: 0;
+  top: 100%; /* juste sous l’en‑tête                        */
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  padding: 10px;
+  margin-top: 6px; /* petit écart visuel facultatif               */
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  z-index: 80; /* au‑dessus du reste de la page               */
+}
+.custom-select.active .select-body {
+  display: flex;
+}
+
+/* Champ de recherche interne */
 .select-search {
   position: relative;
   margin-bottom: 10px;
 }
-
 .select-search input {
   width: 100%;
   padding: 10px 35px 10px 10px;
@@ -86,19 +119,46 @@
   border-radius: 6px;
   font-family: "Manrope", sans-serif;
   font-size: 0.95rem;
+  text-overflow: ellipsis;
 }
-
 .select-search img {
   position: absolute;
-  top: 50%;
+  top: 35%;
   right: 10px;
   transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   filter: brightness(0) invert(0.4);
 }
 
-/* Liste des options */
+.select-search button {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+}
+
+.select-search button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0) invert(0.4);
+}
+
+.select-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Liste des options ------------------------------------------------- */
 .select-options {
   list-style: none;
   padding: 0;
@@ -106,50 +166,43 @@
   max-height: 200px;
   overflow-y: auto;
 }
-
 .select-options li {
   padding: 8px 10px;
   cursor: pointer;
   font-size: 0.95rem;
   border-radius: 6px;
 }
-
 .select-options li:hover {
   background: #ffd15b;
 }
 
-/* Compteur de recettes */
+/* Compteur de recettes --------------------------------------------- */
 .recipe-count {
   font-family: "Anton", sans-serif;
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: 400;
   color: #1b1b1b;
   white-space: nowrap;
   margin-left: auto;
-  font-weight: 400;
 }
 
-/* Tags */
+/* Tags -------------------------------------------------------------- */
 .active-tags {
-  margin: 1rem 0;
+  margin: 1rem 0 0 55px;
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
-  margin-left: 55px;
   font-family: "Manrope", sans-serif;
 }
-
 .tag {
-  background-color: #ffd700;
-  padding: 1rem 1rem;
+  background: #ffd700;
+  padding: 1rem;
   border-radius: 5px;
-  font-weight: bold;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 14px;
-  font-weight: 400;
 }
-
 .tag button {
   background: none;
   border: none;
@@ -158,19 +211,10 @@
   margin-left: 20px;
 }
 
-/* Recipe */
-.recipe-count {
-  font-weight: bold;
-  text-align: right;
-  margin-top: 1rem;
-  margin-right: 1rem;
-  color: #333;
-}
-
+/* --------------------------------------------------  Responsive ---- */
 @media (max-width: 1439px) and (min-width: 1024px) {
   .filters-bar {
     max-width: 1024px;
-    margin: 0 auto;
     margin-top: -175px;
   }
 }
@@ -178,10 +222,8 @@
 @media (max-width: 1023px) and (min-width: 768px) {
   .filters-bar {
     max-width: 768px;
-    margin: 0 auto;
     margin-top: -290px;
   }
-
   .custom-select {
     width: 150px;
   }
@@ -190,15 +232,12 @@
 @media (max-width: 767px) and (min-width: 425px) {
   .filters-bar {
     max-width: 425px;
-    margin: 0 auto;
     margin-top: -450px;
   }
-
   .filters {
     justify-content: center;
     width: 100%;
   }
-
   .custom-select {
     margin: 0 auto;
   }
@@ -207,19 +246,15 @@
 @media (max-width: 424px) and (min-width: 375px) {
   .filters-bar {
     max-width: 375px;
-    margin: 0 auto;
     margin-top: -475px;
   }
-
   .filters {
     justify-content: center;
     width: 100%;
   }
-
   .custom-select {
     margin: 0 auto;
   }
-
   .select-header {
     font-size: 14px;
   }
@@ -228,25 +263,19 @@
 @media (max-width: 374px) and (min-width: 320px) {
   .filters-bar {
     max-width: 320px;
-    margin: 0 auto;
     margin-top: -500px;
   }
-
   .filters {
     justify-content: center;
     width: 100%;
   }
-
   .custom-select {
     margin: 0 auto;
   }
-
   .select-header {
     font-size: 12px;
   }
-
   .recipe-count {
-    font-weight: bold;
     text-align: left;
   }
 }
