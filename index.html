@@ -62,8 +62,16 @@
             </div>
             <div class="select-body">
               <div class="select-search">
-                <input type="text" placeholder="Rechercher un ingrédient..." />
-                <img src="./assets/img/icon/loupe.png" alt="loupe" />
+                <form id="ingredient-search-form">
+                  <input
+                    id="ingredient-search-input"
+                    type="text"
+                    placeholder="Rechercher un ingrédient..."
+                  />
+                  <button type="submit" aria-label="Rechercher">
+                    <img src="./assets/img/icon/loupe.png" alt="loupe" />
+                  </button>
+                </form>
               </div>
               <ul class="select-options" id="ingredient-options"></ul>
             </div>
@@ -87,16 +95,18 @@
             </div>
             <div class="select-body">
               <div class="select-search">
-                <input type="text" placeholder="Rechercher un ingrédient..." />
-                <img src="./assets/img/icon/loupe.png" alt="loupe" />
+                <form id="appliance-search-form">
+                  <input
+                    id="appliance-search-input"
+                    type="text"
+                    placeholder="Rechercher un appareil..."
+                  />
+                  <button type="submit" aria-label="Rechercher">
+                    <img src="./assets/img/icon/loupe.png" alt="loupe" />
+                  </button>
+                </form>
               </div>
-              <ul class="select-options">
-                <li>Four</li>
-                <li>Micro-ondes</li>
-                <li>Mixeur</li>
-                <li>Cuiseur vapeur</li>
-                <li>Blender</li>
-              </ul>
+              <ul class="select-options" id="appliance-options"></ul>
             </div>
           </div>
         </div>
@@ -118,19 +128,22 @@
             </div>
             <div class="select-body">
               <div class="select-search">
-                <input type="text" placeholder="Rechercher un ingrédient..." />
-                <img src="./assets/img/icon/loupe.png" alt="loupe" />
+                <form id="ustensil-search-form">
+                  <input
+                    id="ustensil-search-input"
+                    type="text"
+                    placeholder="Rechercher un ustensile..."
+                  />
+                  <button type="submit" aria-label="Rechercher">
+                    <img src="./assets/img/icon/loupe.png" alt="loupe" />
+                  </button>
+                </form>
               </div>
-              <ul class="select-options">
-                <li>Cuillère en bois</li>
-                <li>Passoire</li>
-                <li>Louche</li>
-                <li>Couteau</li>
-                <li>Épluche-légumes</li>
-              </ul>
+              <ul class="select-options" id="ustensil-options"></ul>
             </div>
           </div>
         </div>
+
         <div class="recipe-count"></div>
       </section>
 
