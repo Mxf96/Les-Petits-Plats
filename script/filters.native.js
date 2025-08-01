@@ -1,8 +1,11 @@
 /* =========================================================
-   F I L T R E S
+   F I L T R E S  –  Version boucles natives (for/while)
 ======================================================== */
 import { recipes } from "./recipes.js";
 import { renderRecipes } from "./renderCards.js";
+
+/* -------------------- Config bench --------------------- */
+const ENABLE_BENCH = false; // passe à true pour logguer le temps de filtre
 
 /* -------------------- DOM ----------------------------- */
 const searchInput = document.querySelector(".search-bar input");
@@ -10,7 +13,7 @@ const tagContainer = document.querySelector(".active-tags");
 const recipeCounter = document.querySelector(".recipe-count");
 const mainForm = document.getElementById("search-form");
 
-/* filtres secondaires */
+/* filtres secondaires (inchangé) */
 const ingForm = document.getElementById("ingredient-search-form");
 const ingInput = document.getElementById("ingredient-search-input");
 const ingList = document.getElementById("ingredient-options");
@@ -25,7 +28,7 @@ const ustList = document.getElementById("ustensil-options");
 
 /* ----------------------- ÉTAT ------------------------- */
 let activeTags = [];
-let currentDataset = recipes; // sous‑ensemble visible
+let currentDataset = recipes;
 
 /* -------------------- UTILITAIRES --------------------- */
 const L = (s) => s.toLowerCase();
@@ -53,17 +56,17 @@ function createTag(label) {
 const ingOf = (r) => r.ingredients.map((i) => L(i.ingredient));
 const appOf = (r) => (r.appliance ? [L(r.appliance)] : []);
 const ustOf = (r) => (r.ustensils || []).map(L);
-
 const uniq = (src, fn) => [...new Set(src.flatMap(fn))].sort();
 
 function fill(ul, items) {
   ul.innerHTML = "";
-  items.forEach((it) => {
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
     const li = document.createElement("li");
     li.textContent = uc(it);
-    li.onclick = () => addTag(it); // clic garanti valide
+    li.onclick = () => addTag(it);
     ul.appendChild(li);
-  });
+  }
 }
 const refreshLists = (src) => {
   fill(ingList, uniq(src, ingOf));
@@ -71,18 +74,62 @@ const refreshLists = (src) => {
   fill(ustList, uniq(src, ustOf));
 };
 
-/* ----------------- FILTRAGE / RENDU ------------------ */
-const match = (r, t) =>
-  r.name.toLowerCase().includes(t) ||
-  r.description.toLowerCase().includes(t) ||
-  r.ingredients.some((i) => L(i.ingredient).includes(t)) ||
-  (r.appliance && L(r.appliance).includes(t)) ||
-  (r.ustensils && r.ustensils.some((u) => L(u).includes(t)));
+/* --------------- FILTRAGE (boucles natives) ----------- */
+function matchNative(r, t) {
+  const tag = t;
+
+  // name
+  if (r.name.toLowerCase().includes(tag)) return true;
+
+  // description
+  if (r.description.toLowerCase().includes(tag)) return true;
+
+  // ingredients
+  for (let i = 0; i < r.ingredients.length; i++) {
+    if (L(r.ingredients[i].ingredient).includes(tag)) return true;
+  }
+
+  // appliance
+  if (r.appliance && L(r.appliance).includes(tag)) return true;
+
+  // ustensils
+  if (r.ustensils) {
+    for (let i = 0; i < r.ustensils.length; i++) {
+      if (L(r.ustensils[i]).includes(tag)) return true;
+    }
+  }
+  return false;
+}
+
+function filterNative(dataset, tags) {
+  if (!tags.length) return dataset;
+
+  const out = [];
+  for (let i = 0; i < dataset.length; i++) {
+    const r = dataset[i];
+    let allOK = true;
+    for (let j = 0; j < tags.length; j++) {
+      if (!matchNative(r, tags[j])) {
+        allOK = false;
+        break;
+      }
+    }
+    if (allOK) out.push(r);
+  }
+  return out;
+}
 
 function filterAndRender() {
-  currentDataset = activeTags.length
-    ? recipes.filter((r) => activeTags.every((t) => match(r, t)))
-    : recipes;
+  const t0 = ENABLE_BENCH ? performance.now() : 0;
+
+  currentDataset = filterNative(recipes, activeTags);
+
+  if (ENABLE_BENCH) {
+    const dt = (performance.now() - t0).toFixed(2);
+    console.log(
+      `[NATIVE] ${activeTags.length} tag(s) – ${currentDataset.length} recettes – ${dt} ms`
+    );
+  }
 
   renderRecipes(currentDataset);
   setCount(currentDataset.length);
@@ -95,13 +142,13 @@ function flashInvalid(target) {
   setTimeout(() => target.classList.remove("invalid"), 600);
 }
 function addTag(raw) {
-  const q = L(raw);
+  const q = L(raw.trim());
   if (q.length < 3 || activeTags.includes(q)) return;
 
-  /* simulation : si le nouveau tag mettrait le compte à 0, on refuse */
-  const testDataset = currentDataset.filter((r) => match(r, q));
+  // Simulation applicquée au champ principal (focus du test)
+  const testDataset = filterNative(currentDataset, [q]);
   if (testDataset.length === 0) {
-    flashInvalid(searchInput); // petit feedback visuel
+    flashInvalid(searchInput);
     return;
   }
 
@@ -113,7 +160,7 @@ function addTag(raw) {
 /* -----------------  SOUMISSIONS ----------------------- */
 mainForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  addTag(searchInput.value.trim());
+  addTag(searchInput.value);
   searchInput.value = "";
 });
 
@@ -139,107 +186,6 @@ ustForm.addEventListener("submit", (e) => submitRestricted(e, ustInput, ustOf));
       li.style.display = li.textContent.toLowerCase().includes(v) ? "" : "none";
     });
   });
-});
-
-/* ------------------ AUTOCOMPLÉTION -------------------- */
-const TERMS = (() => {
-  const s = new Set();
-  recipes.forEach((r) => {
-    [
-      r.name,
-      ...ingOf(r).map(uc),
-      ...appOf(r).map(uc),
-      ...ustOf(r).map(uc),
-    ].forEach((w) => {
-      if (w) s.add(w.toLowerCase());
-    });
-  });
-  return [...s]
-    .map(uc)
-    .sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }));
-})();
-const box = document.createElement("ul");
-box.id = "global-suggestions";
-Object.assign(box.style, {
-  position: "absolute",
-  zIndex: 1000,
-  display: "none",
-});
-document.body.appendChild(box);
-
-const mark = (t, q) =>
-  t.replace(
-    new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "ig"),
-    (m) => `<mark>${m}</mark>`
-  );
-const placeBox = () => {
-  const r = searchInput.getBoundingClientRect();
-  box.style.left = `${window.scrollX + r.left}px`;
-  box.style.top = `${window.scrollY + r.bottom + 10}px`;
-  box.style.width = `${r.width}px`;
-};
-
-let idx = -1;
-function show(q) {
-  const v = q.trim().toLowerCase();
-  if (v.length < 2) {
-    box.style.display = "none";
-    return;
-  }
-  const hits = TERMS.filter((t) => t.toLowerCase().includes(v)).slice(0, 12);
-  if (!hits.length) {
-    box.style.display = "none";
-    return;
-  }
-
-  box.innerHTML = "";
-  idx = -1;
-  hits.forEach((h) => {
-    const li = document.createElement("li");
-    li.innerHTML = mark(h, v);
-    li.onclick = () => {
-      addTag(h);
-      searchInput.value = "";
-      box.style.display = "none";
-    };
-    box.appendChild(li);
-  });
-  placeBox();
-  box.style.display = "block";
-}
-
-searchInput.addEventListener("input", (e) => show(e.target.value));
-searchInput.addEventListener("focus", () => {
-  if (searchInput.value.trim().length >= 2) show(searchInput.value);
-});
-window.addEventListener("resize", () => {
-  if (box.style.display !== "none") placeBox();
-});
-window.addEventListener(
-  "scroll",
-  () => {
-    if (box.style.display !== "none") placeBox();
-  },
-  { passive: true }
-);
-searchInput.addEventListener("keydown", (e) => {
-  const items = [...box.querySelectorAll("li")];
-  if (box.style.display === "none" || !items.length) return;
-  if (e.key === "ArrowDown") {
-    e.preventDefault();
-    idx = (idx + 1) % items.length;
-  } else if (e.key === "ArrowUp") {
-    e.preventDefault();
-    idx = (idx - 1 + items.length) % items.length;
-  } else if (e.key === "Enter") {
-    e.preventDefault();
-    if (idx >= 0) items[idx].click();
-    return;
-  } else if (e.key === "Escape") {
-    box.style.display = "none";
-    return;
-  }
-  items.forEach((li, i) => li.classList.toggle("is-focused", i === idx));
 });
 
 /* ----------------- MENUS custom-select ---------------- */
