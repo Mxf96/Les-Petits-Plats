@@ -2,6 +2,17 @@
   SECTION HEADER    
 ========================================================= */
 
+.logo-img {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: auto;
+  height: 20px;
+  z-index: 2;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
 .main-header {
   overflow: visible;
   z-index: 10;
@@ -10,7 +21,6 @@
   margin: 0 auto;
   height: 650px;
   overflow: hidden;
-  color: #fff;
 }
 
 /* ——— IMAGE DE FOND ——— */
@@ -116,10 +126,6 @@
     margin: 0 auto;
   }
 
-  .logo {
-    font: 400 30px/1 "Anton", sans-serif;
-  }
-
   .header-content {
     margin-top: -30px;
   }
@@ -145,8 +151,8 @@
     margin: 0 auto;
   }
 
-  .logo {
-    font: 400 20px/1 "Anton", sans-serif;
+  .logo-img {
+    height: 15px;
   }
 
   .header-content {
@@ -183,10 +189,8 @@
     margin: 0 auto;
   }
 
-  .logo {
-    top: 20px;
-    left: 20px;
-    font: 400 10px/1 "Anton", sans-serif;
+  .logo-img {
+    height: 10px;
   }
 
   .header-content {
@@ -225,10 +229,8 @@
     margin: 0 auto;
   }
 
-  .logo {
-    top: 20px;
-    left: 20px;
-    font: 400 10px/1 "Anton", sans-serif;
+  .logo-img {
+    height: 10px;
   }
 
   .header-content {
@@ -267,10 +269,8 @@
     margin: 0 auto;
   }
 
-  .logo {
-    top: 20px;
-    left: 20px;
-    font: 400 10px/1 "Anton", sans-serif;
+  .logo-img {
+    height: 10px;
   }
 
   .header-content {
