@@ -1,8 +1,11 @@
 /* =========================================================
-   F I L T R E S
+   F I L T R E S 
 ======================================================== */
 import { recipes } from "./recipes.js";
 import { renderRecipes } from "./renderCards.js";
+
+/* -------------------- Config bench --------------------- */
+const ENABLE_BENCH = false; // passe à true pour logguer le temps de filtre
 
 /* -------------------- DOM ----------------------------- */
 const searchInput = document.querySelector(".search-bar input");
@@ -10,7 +13,7 @@ const tagContainer = document.querySelector(".active-tags");
 const recipeCounter = document.querySelector(".recipe-count");
 const mainForm = document.getElementById("search-form");
 
-/* filtres secondaires */
+/* filtres secondaires (inchangé) */
 const ingForm = document.getElementById("ingredient-search-form");
 const ingInput = document.getElementById("ingredient-search-input");
 const ingList = document.getElementById("ingredient-options");
@@ -25,7 +28,7 @@ const ustList = document.getElementById("ustensil-options");
 
 /* ----------------------- ÉTAT ------------------------- */
 let activeTags = [];
-let currentDataset = recipes; // sous-ensemble actuellement affiché
+let currentDataset = recipes;
 
 /* -------------------- UTILITAIRES --------------------- */
 const L = (s) => s.toLowerCase();
@@ -38,7 +41,6 @@ function createTag(label) {
   const span = document.createElement("span");
   span.className = "tag";
   span.textContent = label;
-
   const close = document.createElement("button");
   close.textContent = "×";
   close.onclick = () => {
@@ -46,7 +48,6 @@ function createTag(label) {
     span.remove();
     filterAndRender();
   };
-
   span.appendChild(close);
   tagContainer.appendChild(span);
 }
@@ -55,7 +56,6 @@ function createTag(label) {
 const ingOf = (r) => r.ingredients.map((i) => L(i.ingredient));
 const appOf = (r) => (r.appliance ? [L(r.appliance)] : []);
 const ustOf = (r) => (r.ustensils || []).map(L);
-
 const uniq = (src, fn) => [...new Set(src.flatMap(fn))].sort();
 
 function fill(ul, items) {
@@ -63,7 +63,7 @@ function fill(ul, items) {
   items.forEach((it) => {
     const li = document.createElement("li");
     li.textContent = uc(it);
-    li.onclick = () => addTag(it); // clic = ajout garanti valide
+    li.onclick = () => addTag(it);
     ul.appendChild(li);
   });
 }
@@ -73,18 +73,30 @@ const refreshLists = (src) => {
   fill(ustList, uniq(src, ustOf));
 };
 
-/* ----------------- FILTRAGE / RENDU ------------------ */
-const match = (r, t) =>
+/* ----------------- FILTRAGE (fonctionnel) ------------- */
+const matchFP = (r, t) =>
   r.name.toLowerCase().includes(t) ||
   r.description.toLowerCase().includes(t) ||
   r.ingredients.some((i) => L(i.ingredient).includes(t)) ||
   (r.appliance && L(r.appliance).includes(t)) ||
   (r.ustensils && r.ustensils.some((u) => L(u).includes(t)));
 
+function filterFunctional(dataset, tags) {
+  if (!tags.length) return dataset;
+  return dataset.filter((r) => tags.every((t) => matchFP(r, t)));
+}
+
 function filterAndRender() {
-  currentDataset = activeTags.length
-    ? recipes.filter((r) => activeTags.every((t) => match(r, t)))
-    : recipes;
+  const t0 = ENABLE_BENCH ? performance.now() : 0;
+
+  currentDataset = filterFunctional(recipes, activeTags);
+
+  if (ENABLE_BENCH) {
+    const dt = (performance.now() - t0).toFixed(2);
+    console.log(
+      `[FP] ${activeTags.length} tag(s) – ${currentDataset.length} recettes – ${dt} ms`
+    );
+  }
 
   renderRecipes(currentDataset);
   setCount(currentDataset.length);
@@ -96,13 +108,12 @@ function flashInvalid(target) {
   target.classList.add("invalid");
   setTimeout(() => target.classList.remove("invalid"), 600);
 }
-
 function addTag(raw) {
   const q = L(raw.trim());
   if (q.length < 3 || activeTags.includes(q)) return;
 
-  // Refuse un tag qui amènerait à 0 recette
-  const testDataset = currentDataset.filter((r) => match(r, q));
+  // Simulation pour le champ principal (focus du test)
+  const testDataset = filterFunctional(currentDataset, [q]);
   if (testDataset.length === 0) {
     flashInvalid(searchInput);
     return;
@@ -114,14 +125,14 @@ function addTag(raw) {
 }
 
 /* -----------------  SOUMISSIONS ----------------------- */
-// Champ principal : on peut taper n’importe quoi, si ça garde ≥1 recette, on ajoute
+// → c'est CE chemin (champ principal) qui est au cœur du test
 mainForm.addEventListener("submit", (e) => {
   e.preventDefault();
   addTag(searchInput.value);
   searchInput.value = "";
 });
 
-// Champs dans les filtres : on n’autorise que les valeurs proposées (dans le sous-ensemble courant)
+// secondaires : ne laissent passer que les valeurs proposées
 function submitRestricted(e, input, getList) {
   e.preventDefault();
   const q = L(input.value.trim());
