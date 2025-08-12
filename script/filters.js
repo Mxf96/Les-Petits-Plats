@@ -1,13 +1,14 @@
-/* =========================================================
+/* ====================================================
    F I L T R E S  –  Version boucles natives (for/while)
-======================================================== */
+==================================================== */
+
 import { recipes } from "./recipes.js";
 import { renderRecipes } from "./renderCards.js";
 
-/* -------------------- Config bench --------------------- */
+/* -------------- Config bench --------------------- */
 const ENABLE_BENCH = false; // passe à true pour afficher le temps de filtrage
 
-/* -------------------- DOM ----------------------------- */
+/* --------------- DOM ----------------------------- */
 const searchInput = document.querySelector(".search-bar input");
 const tagContainer = document.querySelector(".active-tags");
 const recipeCounter = document.querySelector(".recipe-count");
@@ -26,17 +27,17 @@ const ustForm = document.getElementById("ustensil-search-form");
 const ustInput = document.getElementById("ustensil-search-input");
 const ustList = document.getElementById("ustensil-options");
 
-/* ----------------------- ÉTAT ------------------------- */
+/* ------------------ ÉTAT ------------------------- */
 let activeTags = []; // tags actifs saisis par l'utilisateur
 let currentDataset = recipes; // recettes filtrées actuellement affichées
 
-/* -------------------- UTILITAIRES --------------------- */
+/* --------------- UTILITAIRES --------------------- */
 const L = (s) => s.toLowerCase();
 const uc = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 const setCount = (n) =>
   (recipeCounter.textContent = `${String(n).padStart(2, "0")} recettes`);
 
-/* --------------------- TAGS --------------------------- */
+/* ---------------- TAGS --------------------------- */
 // Crée un tag visuel + bouton de fermeture
 function createTag(label) {
   const span = document.createElement("span");
@@ -53,7 +54,7 @@ function createTag(label) {
   tagContainer.appendChild(span);
 }
 
-/* ------------------ LISTES UNIQUES -------------------- */
+/* ------------- LISTES UNIQUES -------------------- */
 // extrait les éléments à filtrer pour chaque type
 const ingOf = (r) => r.ingredients.map((i) => L(i.ingredient));
 const appOf = (r) => (r.appliance ? [L(r.appliance)] : []);
@@ -81,7 +82,7 @@ const refreshLists = (src) => {
   fill(ustList, uniq(src, ustOf));
 };
 
-/* --------------- FILTRAGE (boucles natives) ----------- */
+/* ---------- FILTRAGE (boucles natives) ----------- */
 // vérifie si une recette r correspond à un tag t
 function matchNative(r, t) {
   const tag = t;
@@ -132,7 +133,7 @@ function filterAndRender() {
   refreshLists(currentDataset);
 }
 
-/* --------------  AJOUT D’UN TAG (validation) ---------- */
+/* ---------  AJOUT D’UN TAG (validation) ---------- */
 function flashInvalid(target) {
   target.classList.add("invalid");
   setTimeout(() => target.classList.remove("invalid"), 600);
@@ -151,7 +152,7 @@ function addTag(raw) {
   filterAndRender();
 }
 
-/* -----------------  SOUMISSIONS ----------------------- */
+/* ------------  SOUMISSIONS ----------------------- */
 mainForm.addEventListener("submit", (e) => {
   e.preventDefault();
   addTag(searchInput.value);
@@ -168,7 +169,7 @@ ingForm.addEventListener("submit", (e) => submitRestricted(e, ingInput, ingOf));
 appForm.addEventListener("submit", (e) => submitRestricted(e, appInput, appOf));
 ustForm.addEventListener("submit", (e) => submitRestricted(e, ustInput, ustOf));
 
-/* ------------------- filtre live ---------------------- */
+/* -------------- filtre live ---------------------- */
 [
   [ingInput, ingList],
   [appInput, appList],
@@ -182,7 +183,7 @@ ustForm.addEventListener("submit", (e) => submitRestricted(e, ustInput, ustOf));
   });
 });
 
-/* ----------------- MENUS custom-select ---------------- */
+/* ------------ MENUS custom-select ---------------- */
 document.querySelectorAll(".select-header").forEach((h) => {
   h.addEventListener("click", () =>
     h.closest(".custom-select").classList.toggle("active")
@@ -194,7 +195,7 @@ document.addEventListener("click", (e) => {
   });
 });
 
-/* ------------------------ INIT ------------------------ */
+/* ------------------- INIT ------------------------ */
 renderRecipes(recipes);
 setCount(recipes.length);
 refreshLists(recipes);
