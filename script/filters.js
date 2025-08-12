@@ -4,7 +4,7 @@
 import { recipes } from "./recipes.js";
 import { renderRecipes } from "./renderCards.js";
 
-/* -------------------- DOM ------------------------------ */
+/* -------------- DOM ------------------------------ */
 const searchInput = document.querySelector(".search-bar input");
 const tagContainer = document.querySelector(".active-tags");
 const recipeCounter = document.querySelector(".recipe-count");
@@ -23,11 +23,11 @@ const ustForm = document.getElementById("ustensil-search-form");
 const ustInput = document.getElementById("ustensil-search-input");
 const ustList = document.getElementById("ustensil-options");
 
-/* ----------------------- ÉTAT -------------------------- */
+/* ----------------- ÉTAT -------------------------- */
 let activeTags = []; // tags actifs en minuscule
 let currentDataset = recipes; // sous-ensemble courant
 
-/* -------------------- UTILITAIRES ---------------------- */
+/* -------------- UTILITAIRES ---------------------- */
 const toLower = (s) => s.toLowerCase();
 const normalize = (s) => toLower(String(s).trim());
 const capitalizeFirst = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -36,7 +36,7 @@ const setRecipeCount = (n) => {
   recipeCounter.textContent = `${String(n).padStart(2, "0")} recettes`;
 };
 
-/* --------------------- TAGS UI ------------------------- */
+/* --------------- TAGS UI ------------------------- */
 function createTagChip(label) {
   const chip = document.createElement("span");
   chip.className = "tag";
@@ -54,7 +54,7 @@ function createTagChip(label) {
   tagContainer.appendChild(chip);
 }
 
-/* --------------- EXTRACTION DES FACETTES --------------- */
+/* --------- EXTRACTION DES FACETTES --------------- */
 const ingredientsOf = (r) => r.ingredients.map((i) => toLower(i.ingredient));
 const applianceOf = (r) => (r.appliance ? [toLower(r.appliance)] : []);
 const utensilsOf = (r) => (r.ustensils || []).map(toLower);
@@ -80,7 +80,7 @@ const refreshFacetLists = (src) => {
   populateList(ustList, uniqueSorted(src, utensilsOf));
 };
 
-/* ----------------- MOTEUR DE FILTRAGE ------------------ */
+/* ----------- MOTEUR DE FILTRAGE ------------------ */
 /** Renvoie true si la recette r “matche” le terme t (t est déjà en minuscule) */
 function doesRecipeMatchTerm(r, t) {
   return (
@@ -98,7 +98,7 @@ function filterRecipesByTags(dataset, tags) {
   return dataset.filter((r) => tags.every((t) => doesRecipeMatchTerm(r, t)));
 }
 
-/* --------------- APPLICATION + RENDU ------------------- */
+/* --------- APPLICATION + RENDU ------------------- */
 function applyFiltersAndRender() {
   currentDataset = filterRecipesByTags(recipes, activeTags);
   renderRecipes(currentDataset);
@@ -106,7 +106,7 @@ function applyFiltersAndRender() {
   refreshFacetLists(currentDataset);
 }
 
-/* ----------- AJOUT D’UN TAG (validation) --------------- */
+/* ----- AJOUT D’UN TAG (validation) --------------- */
 function addTag(raw) {
   const q = normalize(raw);
   if (q.length < 3 || activeTags.includes(q)) return;
@@ -116,7 +116,7 @@ function addTag(raw) {
   applyFiltersAndRender();
 }
 
-/* -------------------- SOUMISSIONS ---------------------- */
+/* -------------- SOUMISSIONS ---------------------- */
 // Chemin principal (barre de recherche)
 mainForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -141,7 +141,7 @@ ustForm.addEventListener("submit", (e) =>
   handleRestrictedSubmit(e, ustInput, utensilsOf)
 );
 
-/* ------------------- FILTRE LIVE ----------------------- */
+/* ------------- FILTRE LIVE ----------------------- */
 [
   [ingInput, ingList],
   [appInput, appList],
@@ -155,7 +155,7 @@ ustForm.addEventListener("submit", (e) =>
   });
 });
 
-/* ----------------- MENUS custom-select ----------------- */
+/* ----------- MENUS custom-select ----------------- */
 document.querySelectorAll(".select-header").forEach((header) => {
   header.addEventListener("click", () =>
     header.closest(".custom-select").classList.toggle("active")
@@ -167,7 +167,7 @@ document.addEventListener("click", (e) => {
   });
 });
 
-/* ------------------------ INIT ------------------------- */
+/* ------------------ INIT ------------------------- */
 renderRecipes(recipes);
 setRecipeCount(recipes.length);
 refreshFacetLists(recipes);
