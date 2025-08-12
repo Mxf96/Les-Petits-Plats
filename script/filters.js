@@ -1,19 +1,19 @@
 /* =========================================================
-   F I L T R E S 
-======================================================== */
+   F I L T R E S — version lisible
+========================================================= */
 import { recipes } from "./recipes.js";
 import { renderRecipes } from "./renderCards.js";
 
 /* -------------------- Config bench --------------------- */
-const ENABLE_BENCH = false; // passe à true pour logguer le temps de filtre
+const ENABLE_BENCH = false; // passe à true pour mesurer le temps de filtrage
 
-/* -------------------- DOM ----------------------------- */
+/* -------------------- DOM ------------------------------ */
 const searchInput = document.querySelector(".search-bar input");
 const tagContainer = document.querySelector(".active-tags");
 const recipeCounter = document.querySelector(".recipe-count");
 const mainForm = document.getElementById("search-form");
 
-/* filtres secondaires (inchangé) */
+/* filtres secondaires */
 const ingForm = document.getElementById("ingredient-search-form");
 const ingInput = document.getElementById("ingredient-search-input");
 const ingList = document.getElementById("ingredient-options");
@@ -26,141 +26,152 @@ const ustForm = document.getElementById("ustensil-search-form");
 const ustInput = document.getElementById("ustensil-search-input");
 const ustList = document.getElementById("ustensil-options");
 
-/* ----------------------- ÉTAT ------------------------- */
-let activeTags = [];
-let currentDataset = recipes;
+/* ----------------------- ÉTAT -------------------------- */
+let activeTags = []; // tags actifs en minuscule
+let currentDataset = recipes; // sous-ensemble courant
 
-/* -------------------- UTILITAIRES --------------------- */
-const L = (s) => s.toLowerCase();
-const uc = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-const setCount = (n) =>
-  (recipeCounter.textContent = `${String(n).padStart(2, "0")} recettes`);
+/* -------------------- UTILITAIRES ---------------------- */
+const toLower = (s) => s.toLowerCase();
+const normalize = (s) => toLower(String(s).trim());
+const capitalizeFirst = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
-/* --------------------- TAGS --------------------------- */
-function createTag(label) {
-  const span = document.createElement("span");
-  span.className = "tag";
-  span.textContent = label;
+const setRecipeCount = (n) => {
+  recipeCounter.textContent = `${String(n).padStart(2, "0")} recettes`;
+};
+
+/* --------------------- TAGS UI ------------------------- */
+function createTagChip(label) {
+  const chip = document.createElement("span");
+  chip.className = "tag";
+  chip.textContent = label;
+
   const close = document.createElement("button");
   close.textContent = "×";
   close.onclick = () => {
     activeTags = activeTags.filter((t) => t !== label);
-    span.remove();
-    filterAndRender();
+    chip.remove();
+    applyFiltersAndRender();
   };
-  span.appendChild(close);
-  tagContainer.appendChild(span);
+
+  chip.appendChild(close);
+  tagContainer.appendChild(chip);
 }
 
-/* ------------------ LISTES UNIQUES -------------------- */
-const ingOf = (r) => r.ingredients.map((i) => L(i.ingredient));
-const appOf = (r) => (r.appliance ? [L(r.appliance)] : []);
-const ustOf = (r) => (r.ustensils || []).map(L);
-const uniq = (src, fn) => [...new Set(src.flatMap(fn))].sort();
+/* --------------- EXTRACTION DES FACETTES --------------- */
+const ingredientsOf = (r) => r.ingredients.map((i) => toLower(i.ingredient));
+const applianceOf = (r) => (r.appliance ? [toLower(r.appliance)] : []);
+const utensilsOf = (r) => (r.ustensils || []).map(toLower);
 
-function fill(ul, items) {
+const uniqueSorted = (src, extractor) =>
+  [...new Set(src.flatMap(extractor))].sort();
+
+/* Remplit une <ul> avec des <li> cliquables */
+function populateList(ul, items) {
   ul.innerHTML = "";
-  items.forEach((it) => {
+  items.forEach((val) => {
     const li = document.createElement("li");
-    li.textContent = uc(it);
-    li.onclick = () => addTag(it);
+    li.textContent = capitalizeFirst(val);
+    li.onclick = () => addTag(val);
     ul.appendChild(li);
   });
 }
-const refreshLists = (src) => {
-  fill(ingList, uniq(src, ingOf));
-  fill(appList, uniq(src, appOf));
-  fill(ustList, uniq(src, ustOf));
+
+/* Recalcule les listes (ingrédients, appareils, ustensiles) d’après le dataset courant */
+const refreshFacetLists = (src) => {
+  populateList(ingList, uniqueSorted(src, ingredientsOf));
+  populateList(appList, uniqueSorted(src, applianceOf));
+  populateList(ustList, uniqueSorted(src, utensilsOf));
 };
 
-/* ----------------- FILTRAGE (fonctionnel) ------------- */
-const matchFP = (r, t) =>
-  r.name.toLowerCase().includes(t) ||
-  r.description.toLowerCase().includes(t) ||
-  r.ingredients.some((i) => L(i.ingredient).includes(t)) ||
-  (r.appliance && L(r.appliance).includes(t)) ||
-  (r.ustensils && r.ustensils.some((u) => L(u).includes(t)));
-
-function filterFunctional(dataset, tags) {
-  if (!tags.length) return dataset;
-  return dataset.filter((r) => tags.every((t) => matchFP(r, t)));
+/* ----------------- MOTEUR DE FILTRAGE ------------------ */
+/** Renvoie true si la recette r “matche” le terme t (t est déjà en minuscule) */
+function doesRecipeMatchTerm(r, t) {
+  return (
+    r.name.toLowerCase().includes(t) ||
+    r.description.toLowerCase().includes(t) ||
+    r.ingredients.some((i) => toLower(i.ingredient).includes(t)) ||
+    (r.appliance && toLower(r.appliance).includes(t)) ||
+    (r.ustensils && r.ustensils.some((u) => toLower(u).includes(t)))
+  );
 }
 
-function filterAndRender() {
+/** Filtre un dataset par un ensemble de tags (ET logique) */
+function filterRecipesByTags(dataset, tags) {
+  if (!tags.length) return dataset;
+  return dataset.filter((r) => tags.every((t) => doesRecipeMatchTerm(r, t)));
+}
+
+/* --------------- APPLICATION + RENDU ------------------- */
+function applyFiltersAndRender() {
   const t0 = ENABLE_BENCH ? performance.now() : 0;
 
-  currentDataset = filterFunctional(recipes, activeTags);
+  currentDataset = filterRecipesByTags(recipes, activeTags);
 
   if (ENABLE_BENCH) {
     const dt = (performance.now() - t0).toFixed(2);
     console.log(
-      `[FP] ${activeTags.length} tag(s) – ${currentDataset.length} recettes – ${dt} ms`
+      `[filter] ${activeTags.length} tag(s) – ${currentDataset.length} recettes – ${dt} ms`
     );
   }
 
   renderRecipes(currentDataset);
-  setCount(currentDataset.length);
-  refreshLists(currentDataset);
+  setRecipeCount(currentDataset.length);
+  refreshFacetLists(currentDataset);
 }
 
-/* --------------  AJOUT D’UN TAG (validation) ---------- */
-function flashInvalid(target) {
-  target.classList.add("invalid");
-  setTimeout(() => target.classList.remove("invalid"), 600);
-}
+/* ----------- AJOUT D’UN TAG (validation) --------------- */
 function addTag(raw) {
-  const q = L(raw.trim());
+  const q = normalize(raw);
   if (q.length < 3 || activeTags.includes(q)) return;
 
-  // Simulation pour le champ principal (focus du test)
-  const testDataset = filterFunctional(currentDataset, [q]);
-  if (testDataset.length === 0) {
-    flashInvalid(searchInput);
-    return;
-  }
-
   activeTags.push(q);
-  createTag(q);
-  filterAndRender();
+  createTagChip(q);
+  applyFiltersAndRender();
 }
 
-/* -----------------  SOUMISSIONS ----------------------- */
-// → c'est CE chemin (champ principal) qui est au cœur du test
+/* -------------------- SOUMISSIONS ---------------------- */
+// Chemin principal (barre de recherche)
 mainForm.addEventListener("submit", (e) => {
   e.preventDefault();
   addTag(searchInput.value);
   searchInput.value = "";
 });
 
-// secondaires : ne laissent passer que les valeurs proposées
-function submitRestricted(e, input, getList) {
+// Soumissions restreintes — n’autorisent que les valeurs proposées
+function handleRestrictedSubmit(e, input, extractor) {
   e.preventDefault();
-  const q = L(input.value.trim());
-  if (uniq(currentDataset, getList).includes(q)) addTag(q);
+  const q = normalize(input.value);
+  if (uniqueSorted(currentDataset, extractor).includes(q)) addTag(q);
   input.value = "";
 }
-ingForm.addEventListener("submit", (e) => submitRestricted(e, ingInput, ingOf));
-appForm.addEventListener("submit", (e) => submitRestricted(e, appInput, appOf));
-ustForm.addEventListener("submit", (e) => submitRestricted(e, ustInput, ustOf));
+ingForm.addEventListener("submit", (e) =>
+  handleRestrictedSubmit(e, ingInput, ingredientsOf)
+);
+appForm.addEventListener("submit", (e) =>
+  handleRestrictedSubmit(e, appInput, applianceOf)
+);
+ustForm.addEventListener("submit", (e) =>
+  handleRestrictedSubmit(e, ustInput, utensilsOf)
+);
 
-/* ------------------- filtre live ---------------------- */
+/* ------------------- FILTRE LIVE ----------------------- */
 [
   [ingInput, ingList],
   [appInput, appList],
   [ustInput, ustList],
 ].forEach(([inp, list]) => {
   inp.addEventListener("input", () => {
-    const v = L(inp.value.trim());
+    const v = normalize(inp.value);
     list.querySelectorAll("li").forEach((li) => {
       li.style.display = li.textContent.toLowerCase().includes(v) ? "" : "none";
     });
   });
 });
 
-/* ----------------- MENUS custom-select ---------------- */
-document.querySelectorAll(".select-header").forEach((h) => {
-  h.addEventListener("click", () =>
-    h.closest(".custom-select").classList.toggle("active")
+/* ----------------- MENUS custom-select ----------------- */
+document.querySelectorAll(".select-header").forEach((header) => {
+  header.addEventListener("click", () =>
+    header.closest(".custom-select").classList.toggle("active")
   );
 });
 document.addEventListener("click", (e) => {
@@ -169,7 +180,7 @@ document.addEventListener("click", (e) => {
   });
 });
 
-/* ------------------------ INIT ------------------------ */
+/* ------------------------ INIT ------------------------- */
 renderRecipes(recipes);
-setCount(recipes.length);
-refreshLists(recipes);
+setRecipeCount(recipes.length);
+refreshFacetLists(recipes);
