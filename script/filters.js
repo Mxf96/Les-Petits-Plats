@@ -1,11 +1,8 @@
-/* =========================================================
+/* ====================================================
    F I L T R E S
-========================================================= */
+==================================================== */
 import { recipes } from "./recipes.js";
 import { renderRecipes } from "./renderCards.js";
-
-/* -------------------- Config bench --------------------- */
-const ENABLE_BENCH = false; // passe à true pour mesurer le temps de filtrage
 
 /* -------------------- DOM ------------------------------ */
 const searchInput = document.querySelector(".search-bar input");
@@ -95,7 +92,7 @@ function doesRecipeMatchTerm(r, t) {
   );
 }
 
-/** Filtre un dataset par un ensemble de tags (ET logique) */
+/** Filtre un dataset par un ensemble de tags */
 function filterRecipesByTags(dataset, tags) {
   if (!tags.length) return dataset;
   return dataset.filter((r) => tags.every((t) => doesRecipeMatchTerm(r, t)));
@@ -103,17 +100,7 @@ function filterRecipesByTags(dataset, tags) {
 
 /* --------------- APPLICATION + RENDU ------------------- */
 function applyFiltersAndRender() {
-  const t0 = ENABLE_BENCH ? performance.now() : 0;
-
   currentDataset = filterRecipesByTags(recipes, activeTags);
-
-  if (ENABLE_BENCH) {
-    const dt = (performance.now() - t0).toFixed(2);
-    console.log(
-      `[filter] ${activeTags.length} tag(s) – ${currentDataset.length} recettes – ${dt} ms`
-    );
-  }
-
   renderRecipes(currentDataset);
   setRecipeCount(currentDataset.length);
   refreshFacetLists(currentDataset);
