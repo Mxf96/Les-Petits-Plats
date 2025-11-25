@@ -25,7 +25,8 @@ const ustList = document.getElementById("ustensil-options");
 
 /* ----------------- ÉTAT -------------------------- */
 let activeTags = []; // tags actifs en minuscule
-let currentDataset = recipes; // sous-ensemble courant
+let currentDataset = recipes; // sous-ensemble filtré
+let mainSearchTerm = ""; // ⬅️ Nouvelle variable : recherche principale
 
 /* -------------- UTILITAIRES ---------------------- */
 const toLower = (s) => s.toLowerCase();
@@ -62,7 +63,7 @@ const utensilsOf = (r) => (r.ustensils || []).map(toLower);
 const uniqueSorted = (src, extractor) =>
   [...new Set(src.flatMap(extractor))].sort();
 
-/* Remplit une <ul> avec des <li> cliquables */
+/* Remplit une liste <ul> */
 function populateList(ul, items) {
   ul.innerHTML = "";
   items.forEach((val) => {
@@ -73,7 +74,6 @@ function populateList(ul, items) {
   });
 }
 
-/* Recalcule les listes (ingrédients, appareils, ustensiles) d’après le dataset courant */
 const refreshFacetLists = (src) => {
   populateList(ingList, uniqueSorted(src, ingredientsOf));
   populateList(appList, uniqueSorted(src, applianceOf));
@@ -81,7 +81,6 @@ const refreshFacetLists = (src) => {
 };
 
 /* ----------- MOTEUR DE FILTRAGE ------------------ */
-/** Renvoie true si la recette r “matche” le terme t (t est déjà en minuscule) */
 function doesRecipeMatchTerm(r, t) {
   return (
     r.name.toLowerCase().includes(t) ||
@@ -92,7 +91,6 @@ function doesRecipeMatchTerm(r, t) {
   );
 }
 
-/** Filtre un dataset par un ensemble de tags */
 function filterRecipesByTags(dataset, tags) {
   if (!tags.length) return dataset;
   return dataset.filter((r) => tags.every((t) => doesRecipeMatchTerm(r, t)));
@@ -100,7 +98,15 @@ function filterRecipesByTags(dataset, tags) {
 
 /* --------- APPLICATION + RENDU ------------------- */
 function applyFiltersAndRender() {
-  currentDataset = filterRecipesByTags(recipes, activeTags);
+  let filtered = filterRecipesByTags(recipes, activeTags);
+
+  // ⬅️ ajout du filtre de recherche principale
+  if (mainSearchTerm.length >= 3) {
+    filtered = filtered.filter((r) => doesRecipeMatchTerm(r, mainSearchTerm));
+  }
+
+  currentDataset = filtered;
+
   renderRecipes(currentDataset);
   setRecipeCount(currentDataset.length);
   refreshFacetLists(currentDataset);
@@ -117,20 +123,35 @@ function addTag(raw) {
 }
 
 /* -------------- SOUMISSIONS ---------------------- */
-// Chemin principal (barre de recherche)
+/* ❗ Recherche principale — ne crée plus de tag */
 mainForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  addTag(searchInput.value);
-  searchInput.value = "";
+  const q = normalize(searchInput.value);
+
+  if (q.length >= 3) {
+    mainSearchTerm = q;
+    applyFiltersAndRender();
+  }
 });
 
-// Soumissions restreintes — n’autorisent que les valeurs proposées
+/* Efface la recherche si l’input est vidé */
+searchInput.addEventListener("input", () => {
+  const q = normalize(searchInput.value);
+
+  if (q.length < 3) {
+    mainSearchTerm = "";
+    applyFiltersAndRender();
+  }
+});
+
+/* Soumissions restreintes */
 function handleRestrictedSubmit(e, input, extractor) {
   e.preventDefault();
   const q = normalize(input.value);
   if (uniqueSorted(currentDataset, extractor).includes(q)) addTag(q);
   input.value = "";
 }
+
 ingForm.addEventListener("submit", (e) =>
   handleRestrictedSubmit(e, ingInput, ingredientsOf)
 );
@@ -161,6 +182,7 @@ document.querySelectorAll(".select-header").forEach((header) => {
     header.closest(".custom-select").classList.toggle("active")
   );
 });
+
 document.addEventListener("click", (e) => {
   document.querySelectorAll(".custom-select").forEach((sel) => {
     if (!sel.contains(e.target)) sel.classList.remove("active");
