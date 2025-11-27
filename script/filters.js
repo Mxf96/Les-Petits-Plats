@@ -100,7 +100,7 @@ function filterRecipesByTags(dataset, tags) {
 function applyFiltersAndRender() {
   let filtered = filterRecipesByTags(recipes, activeTags);
 
-  // ⬅️ ajout du filtre de recherche principale
+  // ajout du filtre de recherche principale
   if (mainSearchTerm.length >= 3) {
     filtered = filtered.filter((r) => doesRecipeMatchTerm(r, mainSearchTerm));
   }
@@ -123,7 +123,7 @@ function addTag(raw) {
 }
 
 /* -------------- SOUMISSIONS ---------------------- */
-/* ❗ Recherche principale — ne crée plus de tag */
+/* Recherche principale — ne crée plus de tag */
 mainForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const q = normalize(searchInput.value);
