@@ -122,7 +122,7 @@ function addTag(raw) {
 }
 
 /* -------------- SOUMISSIONS ---------------------- */
-/* Recherche principale — ne crée plus de tag */
+/* Recherche principale */
 mainForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const q = normalize(searchInput.value);
