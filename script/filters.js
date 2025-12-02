@@ -24,9 +24,9 @@ const ustInput = document.getElementById("ustensil-search-input");
 const ustList = document.getElementById("ustensil-options");
 
 /* ----------------- ÉTAT -------------------------- */
-let activeTags = []; // tags actifs en minuscule
-let currentDataset = recipes; // sous-ensemble filtré
-let mainSearchTerm = ""; // ⬅️ Nouvelle variable : recherche principale
+let activeTags = [];
+let currentDataset = recipes; 
+let mainSearchTerm = "";
 
 /* -------------- UTILITAIRES ---------------------- */
 const toLower = (s) => s.toLowerCase();
