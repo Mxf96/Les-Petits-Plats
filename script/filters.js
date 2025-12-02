@@ -100,7 +100,6 @@ function filterRecipesByTags(dataset, tags) {
 function applyFiltersAndRender() {
   let filtered = filterRecipesByTags(recipes, activeTags);
 
-  // ajout du filtre de recherche principale
   if (mainSearchTerm.length >= 3) {
     filtered = filtered.filter((r) => doesRecipeMatchTerm(r, mainSearchTerm));
   }
