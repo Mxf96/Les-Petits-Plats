@@ -29,8 +29,6 @@ const ustList = document.getElementById("ustensil-options");
 /* ------------------ ÉTAT ------------------------- */
 let activeTags = [];
 let currentDataset = recipes;
-
-// ⬅️ Nouveau : terme principal de recherche
 let mainSearchTerm = "";
 
 /* --------------- UTILITAIRES --------------------- */
@@ -128,7 +126,7 @@ function filterAndRender() {
 
   let filtered = filterNative(recipes, activeTags);
 
-  // 🔍 Ajout de la recherche principale
+  // Ajout de la recherche principale
   if (mainSearchTerm.length >= 3) {
     const term = mainSearchTerm;
 
@@ -176,7 +174,6 @@ function addTag(raw) {
 }
 
 /* ------------  SOUMISSIONS ----------------------- */
-/* ❗ NOUVEAU COMPORTEMENT : la barre principale ne crée plus de tag */
 mainForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const q = L(searchInput.value.trim());
