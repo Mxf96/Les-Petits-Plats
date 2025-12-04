@@ -12,7 +12,6 @@ const ENABLE_BENCH = false;
 const searchInput = document.querySelector(".search-bar input");
 const tagContainer = document.querySelector(".active-tags");
 const recipeCounter = document.querySelector(".recipe-count");
-const mainForm = document.getElementById("search-form");
 
 const ingForm = document.getElementById("ingredient-search-form");
 const ingInput = document.getElementById("ingredient-search-input");
@@ -29,15 +28,16 @@ const ustList = document.getElementById("ustensil-options");
 /* ------------------ ÉTAT ------------------------- */
 let activeTags = [];
 let currentDataset = recipes;
-
-// ⬅️ Nouveau : terme principal de recherche
 let mainSearchTerm = "";
 
 /* --------------- UTILITAIRES --------------------- */
-const L = (s) => s.toLowerCase();
-const uc = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-const setCount = (n) =>
-  (recipeCounter.textContent = `${String(n).padStart(2, "0")} recettes`);
+const toLower = (s) => s.toLowerCase();
+const normalize = (s) => toLower(String(s).trim());
+const capitalizeFirst = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+const setRecipeCount = (n) => {
+  recipeCounter.textContent = `${String(n).padStart(2, "0")} recettes`;
+};
 
 /* ---------------- TAGS --------------------------- */
 function createTag(label) {
@@ -50,7 +50,7 @@ function createTag(label) {
   close.onclick = () => {
     activeTags = activeTags.filter((t) => t !== label);
     span.remove();
-    filterAndRender();
+    applyFiltersAndRender();
   };
 
   span.appendChild(close);
@@ -58,46 +58,49 @@ function createTag(label) {
 }
 
 /* ------------- LISTES UNIQUES -------------------- */
-const ingOf = (r) => r.ingredients.map((i) => L(i.ingredient));
-const appOf = (r) => (r.appliance ? [L(r.appliance)] : []);
-const ustOf = (r) => (r.ustensils || []).map(L);
+const ingredientsOf = (r) => r.ingredients.map((i) => toLower(i.ingredient));
+const applianceOf = (r) => (r.appliance ? [toLower(r.appliance)] : []);
+const utensilsOf = (r) => (r.ustensils || []).map(toLower);
 
-const uniq = (src, fn) => [...new Set(src.flatMap(fn))].sort();
+const uniqueSorted = (src, extractor) =>
+  [...new Set(src.flatMap(extractor))].sort();
 
-function fill(ul, items) {
+function populateList(ul, items) {
   ul.innerHTML = "";
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
     const li = document.createElement("li");
-    li.textContent = uc(it);
+    li.textContent = capitalizeFirst(it);
     li.onclick = () => addTag(it);
     ul.appendChild(li);
   }
 }
 
-const refreshLists = (src) => {
-  fill(ingList, uniq(src, ingOf));
-  fill(appList, uniq(src, appOf));
-  fill(ustList, uniq(src, ustOf));
+const refreshFacetLists  = (src) => {
+  populateList(ingList, uniqueSorted(src, ingredientsOf));
+  populateList(appList, uniqueSorted(src, applianceOf));
+  populateList(ustList, uniqueSorted(src, utensilsOf));
 };
 
 /* ---------- FILTRAGE (boucles natives) ----------- */
-function matchNative(r, t) {
-  const tag = t;
-  if (r.name.toLowerCase().includes(tag)) return true;
-  if (r.description.toLowerCase().includes(tag)) return true;
+function matchNative(r, term) {
+  const t = term;
+
+  if (r.name.toLowerCase().includes(t)) return true;
+  if (r.description.toLowerCase().includes(t)) return true;
 
   for (let i = 0; i < r.ingredients.length; i++) {
-    if (L(r.ingredients[i].ingredient).includes(tag)) return true;
+    if (toLower(r.ingredients[i].ingredient).includes(t)) return true;
   }
 
-  if (r.appliance && L(r.appliance).includes(tag)) return true;
+  if (r.appliance && toLower(r.appliance).includes(t)) return true;
 
   if (r.ustensils) {
     for (let i = 0; i < r.ustensils.length; i++) {
-      if (L(r.ustensils[i]).includes(tag)) return true;
+      if (toLower(r.ustensils[i]).includes(t)) return true;
     }
   }
+
   return false;
 }
 
@@ -123,16 +126,16 @@ function filterNative(dataset, tags) {
 }
 
 /* --------- APPLICATION + RENDU ------------------- */
-function filterAndRender() {
+function applyFiltersAndRender() {
   const t0 = ENABLE_BENCH ? performance.now() : 0;
 
   let filtered = filterNative(recipes, activeTags);
 
-  // 🔍 Ajout de la recherche principale
+  // Ajout de la recherche principale
   if (mainSearchTerm.length >= 3) {
     const term = mainSearchTerm;
-
     const out = [];
+
     for (let i = 0; i < filtered.length; i++) {
       if (matchNative(filtered[i], term)) out.push(filtered[i]);
     }
@@ -149,8 +152,8 @@ function filterAndRender() {
 
   currentDataset = filtered;
   renderRecipes(filtered);
-  setCount(filtered.length);
-  refreshLists(filtered);
+  setRecipeCount(filtered.length);
+  refreshFacetLists(filtered);
 }
 
 /* ---------  AJOUT D’UN TAG (validation) ---------- */
@@ -160,10 +163,9 @@ function flashInvalid(target) {
 }
 
 function addTag(raw) {
-  const q = L(raw.trim());
+  const q = normalize(raw);
   if (q.length < 3 || activeTags.includes(q)) return;
 
-  // Test préliminaire
   const test = filterNative(currentDataset, [q]);
   if (test.length === 0) {
     flashInvalid(searchInput);
@@ -172,56 +174,57 @@ function addTag(raw) {
 
   activeTags.push(q);
   createTag(q);
-  filterAndRender();
+  applyFiltersAndRender();
 }
 
-/* ------------  SOUMISSIONS ----------------------- */
-/* ❗ NOUVEAU COMPORTEMENT : la barre principale ne crée plus de tag */
-mainForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const q = L(searchInput.value.trim());
+/* ------------  RECHERCHE LIVE ----------------------- */
+searchInput.addEventListener("input", () => {
+  const q = normalize(searchInput.value);
 
   if (q.length >= 3) {
     mainSearchTerm = q;
-    filterAndRender();
-  }
-});
-
-/* Vidage auto si moins de 3 caractères */
-searchInput.addEventListener("input", () => {
-  const q = L(searchInput.value.trim());
-
-  if (q.length < 3) {
+  } else {
     mainSearchTerm = "";
-    filterAndRender();
   }
+
+  applyFiltersAndRender();
 });
 
 /* Soumissions secondaires */
-function submitRestricted(e, input, listFn) {
+function handleRestrictedSubmit(e, input, extractor) {
   e.preventDefault();
-  const q = L(input.value.trim());
-  if (uniq(currentDataset, listFn).includes(q)) addTag(q);
+  const q = normalize(input.value);
+  if (uniqueSorted(currentDataset, extractor).includes(q)) addTag(q);
   input.value = "";
 }
 
-ingForm.addEventListener("submit", (e) => submitRestricted(e, ingInput, ingOf));
-appForm.addEventListener("submit", (e) => submitRestricted(e, appInput, appOf));
-ustForm.addEventListener("submit", (e) => submitRestricted(e, ustInput, ustOf));
+ingForm.addEventListener("submit", (e) =>
+  handleRestrictedSubmit(e, ingInput, ingredientsOf)
+);
+appForm.addEventListener("submit", (e) =>
+  handleRestrictedSubmit(e, appInput, applianceOf)
+);
+ustForm.addEventListener("submit", (e) =>
+  handleRestrictedSubmit(e, ustInput, utensilsOf)
+);
+
+
 
 /* -------------- filtre live ---------------------- */
-[
-  [ingInput, ingList],
-  [appInput, appList],
-  [ustInput, ustList],
-].forEach(([inp, list]) => {
-  inp.addEventListener("input", () => {
-    const v = L(inp.value.trim());
-    list.querySelectorAll("li").forEach((li) => {
-      li.style.display = li.textContent.toLowerCase().includes(v) ? "" : "none";
+function LiveFilter(inputEl, listEl) {
+  inputEl.addEventListener("input", () => {
+    const term = normalize(inputEl.value);
+
+    listEl.querySelectorAll("li").forEach((li) => {
+      const text = li.textContent.toLowerCase();
+      li.style.display = text.includes(term) ? "" : "none";
     });
   });
-});
+}
+
+LiveFilter(ingInput, ingList);
+LiveFilter(appInput, appList);
+LiveFilter(ustInput, ustList);
 
 /* ------------ MENUS custom-select ---------------- */
 document.querySelectorAll(".select-header").forEach((h) => {
@@ -238,5 +241,5 @@ document.addEventListener("click", (e) => {
 
 /* ------------------- INIT ------------------------ */
 renderRecipes(recipes);
-setCount(recipes.length);
-refreshLists(recipes);
+setRecipeCount(recipes.length);
+refreshFacetLists(recipes);
