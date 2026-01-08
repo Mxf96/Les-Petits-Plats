@@ -8,7 +8,6 @@ import { renderRecipes } from "./renderCards.js";
 const searchInput = document.querySelector(".search-bar input");
 const tagContainer = document.querySelector(".active-tags");
 const recipeCounter = document.querySelector(".recipe-count");
-const mainForm = document.getElementById("search-form");
 
 /* filtres secondaires */
 const ingForm = document.getElementById("ingredient-search-form");
@@ -122,25 +121,17 @@ function addTag(raw) {
 }
 
 /* -------------- SOUMISSIONS ---------------------- */
-/* Recherche principale */
-mainForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+/* Recherche principale en live */
+searchInput.addEventListener("input", () => {
   const q = normalize(searchInput.value);
 
   if (q.length >= 3) {
     mainSearchTerm = q;
-    applyFiltersAndRender();
-  }
-});
-
-/* Efface la recherche si l’input est vidé */
-searchInput.addEventListener("input", () => {
-  const q = normalize(searchInput.value);
-
-  if (q.length < 3) {
+  } else {
     mainSearchTerm = "";
-    applyFiltersAndRender();
   }
+
+  applyFiltersAndRender();
 });
 
 /* Soumissions restreintes */
@@ -162,18 +153,20 @@ ustForm.addEventListener("submit", (e) =>
 );
 
 /* ------------- FILTRE LIVE ----------------------- */
-[
-  [ingInput, ingList],
-  [appInput, appList],
-  [ustInput, ustList],
-].forEach(([inp, list]) => {
-  inp.addEventListener("input", () => {
-    const v = normalize(inp.value);
-    list.querySelectorAll("li").forEach((li) => {
-      li.style.display = li.textContent.toLowerCase().includes(v) ? "" : "none";
+function LiveFilter(inputEl, listEl) {
+  inputEl.addEventListener("input", () => {
+    const term = normalize(inputEl.value);
+
+    listEl.querySelectorAll("li").forEach((li) => {
+      const text = li.textContent.toLowerCase();
+      li.style.display = text.includes(term) ? "" : "none";
     });
   });
-});
+}
+
+LiveFilter(ingInput, ingList);
+LiveFilter(appInput, appList);
+LiveFilter(ustInput, ustList);
 
 /* ----------- MENUS custom-select ----------------- */
 document.querySelectorAll(".select-header").forEach((header) => {
