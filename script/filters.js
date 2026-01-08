@@ -178,10 +178,8 @@ function addTag(raw) {
 }
 
 /* ------------  SOUMISSIONS ----------------------- */
-/* ❗ NOUVEAU COMPORTEMENT : la barre principale ne crée plus de tag */
-mainForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const q = L(searchInput.value.trim());
+searchInput.addEventListener("input", () => {
+  const q = normalize(searchInput.value);
 
   if (q.length >= 3) {
     mainSearchTerm = q;
